@@ -1,0 +1,23 @@
+if any(it == genNumber(:))
+    %this line of code below is to  make sure that all graphs come into
+    %seperate
+    figure(it);
+    % plot the contour graph
+    %create mesh
+    [X,Y] = meshgrid(VarMin:0.1:VarMax, VarMin:0.1:VarMax);
+    %create the possible solution space with X and Y
+    Z = 100*(Y-X.^2).^2+(1-X).^2;
+    %draw contour
+    colormap(bone)
+    contour(X,Y,Z);
+
+    %mark the points in the contour graph for the iteration 'it'
+    for loop = 1:nPop
+        hold on;
+        scatter(plotX(it,loop),plotY(it,loop),"k");
+        title(['Particle Swarm Optimization Function' num2str(it) "th Generation"]);
+        hold on
+        scatter(GlobalBest.Position(1), GlobalBest.Position(2),"filled","o","r");
+        hold off
+    end
+end
