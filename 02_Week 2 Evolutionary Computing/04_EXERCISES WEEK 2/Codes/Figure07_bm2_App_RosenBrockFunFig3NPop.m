@@ -1,0 +1,52 @@
+clc; clear;
+
+%% Problem Definiton
+
+problem.CostFunction = @(x,y) RosenBrockFunction(x,y);  % Cost Function
+problem.nVar = 2;       % Number of Unknown (Decision) Variables
+problem.VarMin =  -10;  % Lower Bound of Decision Variables
+problem.VarMax =  10;   % Upper Bound of Decision Variables
+params.toleranceValue = 10^(-5); %tolerance value which can be accepted as solution with the maximum error allowed
+%% Parameters of PSO
+
+params.MaxIt = 300;        % Maximum Number of Iterations
+params.w = 1;               % Intertia Coefficient
+params.wdamp = 0.99;        % Damping Ratio of Inertia Coefficient
+params.c1 = 2;              % Personal Acceleration Coefficient
+params.c2 = 2;              % Social Acceleration Coefficient
+params.ShowIterInfo = false; % Flag for Showing Iteration Informatin
+
+%% Effect of Population Size (nPop)
+
+%different number of 'nPop' values
+nPopVariation = [50, 100,300,500,1000,2000,5000,10000,15000];
+
+%Variable to store the number of Iterations take to reach the minimum
+%value (In Min One Problem, it is zero)
+numberOfIterations = numel(nPopVariation);
+iterationsInEachSolution = inf(1,numberOfIterations);
+%Run the same Binary GA 30 times
+for i=1:numberOfIterations
+    params.nPop = nPopVariation(i);
+    out(i) = pso_RosenBrockFunWithToleranceValue(problem, params); 
+    %filter number of non zeros, since adding one to this will give the
+    %minimum iterations needed for the result
+    iterationsInEachSolution(i)= nnz(out(i).BestCosts)+1;
+    % plot the result into the existing graph
+    hold on
+    semilogy(out(i).BestCosts,"LineWidth",2,'DisplayName',num2str(nPopVariation(i)));
+    hold off
+end
+% Describing the attributes for the graph
+title("Effect of Population Size (nPOp)")
+xlabel('Iterations');
+ylabel('Best Cost');
+%for the purpous of seeing the change in each experiment, xlim is used to
+%get a more close view
+ylim([0 10^-4])
+xlim([0 300]);
+%draw a line parallel to x axis to find on which iteration the output
+%reaches to 10^-5
+yline(10^-5,'-',{'Acceptable','Limit'});
+grid on;
+legend(num2str(nPopVariation.'), 'location', 'northeast');
